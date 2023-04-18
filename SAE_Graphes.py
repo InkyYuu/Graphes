@@ -208,17 +208,25 @@ def complet(auto):
 
 def complete(auto):
     occurence = {}
-    auto['etats'].append('ε')
+    etats = auto["etats"].copy()
+    transitions = auto["transitions"].copy()
+    etats.append('ε')
     for e in auto['etats'] :
         occurence[e] = set()
     for t in auto['transitions'] :
         occurence[t[0]].add(t[1])
-    for etats, lettres in occurence.items() :
-        if len(lettres) < len(auto['alphabet']):
+    for etat, lettre in occurence.items() :
+        if len(lettre) < len(auto['alphabet']):
             for l in auto['alphabet'] :
-                if l not in lettres :
-                    auto['transitions'].append([etats, l, 'ε'])
-    return auto
+                if l not in lettre :
+                    transitions.append([etat, l, 'ε'])
+    return {
+        "alphabet" : auto["alphabet"],
+        "etats" : etats,
+        "transitions" : transitions,
+        "I": auto["I"],
+        "F": auto["F"]
+    }
 
 def complement(auto):
     auto_complement = complete(renommage(determinise(auto)))
@@ -350,7 +358,7 @@ print(f'4.2 - Auto produit différence : {difference(auto0, auto1)}')
 print('\n-----   5 - Propriétés de fermeture   -----\n')
 print(f'5.1 - Auto préfixe : {prefixe(auto1)}')
 print(f'5.2 - Auto suffixe : {suffixe(auto1)}')
-print(f'5.3 - Auto facteur : {complete(auto1)}')
+print(f'5.3 - Auto facteur : {facteurs(auto1)}')
 print(f'5.4 - Auto miroir : {auto_miroir(auto1)}')
 
 # 6 - Minimisation
